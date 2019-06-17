@@ -1,0 +1,39 @@
+From 646e4d70291cfe6422ca8138c78c6a5266d45b9b Mon Sep 17 00:00:00 2001
+From: Gary Bisson <bisson.gary@gmail.com>
+Date: Sun, 26 May 2019 18:52:55 +0200
+Subject: [PATCH 1/2] allow true dynamic linking for Linux build
+
+Currently the binary generated from a Linux build is dynamically linked
+but we force the static version for libstdc++ and libgcc.
+
+Let's use the standard dynamic libraries for Linux to ease the tool
+integration into Buildroot build system [1].
+
+But also keep the option to build with the static stdc++ libraries as
+some people apparently need it:
+ # cmake -D'STATIC=1' .
+ # make
+
+[1] http://lists.busybox.net/pipermail/buildroot/2019-May/250858.html
+
+Signed-off-by: Gary Bisson <bisson.gary@gmail.com>
+---
+ uuu/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/uuu/CMakeLists.txt b/uuu/CMakeLists.txt
+index c299715..b1453e6 100644
+--- a/uuu/CMakeLists.txt
++++ b/uuu/CMakeLists.txt
+@@ -12,7 +12,7 @@ find_package(Threads)
+ 
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -O2")
+ 
+-if (NOT APPLE)
++if (STATIC)
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -static-libgcc")
+ endif()
+ 
+-- 
+2.21.0
+

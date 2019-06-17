@@ -1,0 +1,87 @@
+From 76db76b9230eefc86bb7bf44a41041c899993585 Mon Sep 17 00:00:00 2001
+From: Richard Hu <richard.hu@technexion.com>
+Date: Sun, 28 Apr 2019 23:20:11 -0700
+Subject: [PATCH 1/3] add built-in script 'emmc_img' to flash image to eMMC
+ user data area
+
+'emmc_all' burns whole image to eMMC and boot loader to eMMC boot area,
+then sets the eMMC to boot from eMMC boot partition.
+'emmc_img' only burn whole image to eMMC, and so it still boots from eMMC user data area.
+---
+ uuu/CMakeLists.txt    |  1 +
+ uuu/buildincmd.cpp    |  7 ++++++-
+ uuu/emmc_burn_img.lst | 32 ++++++++++++++++++++++++++++++++
+ 3 files changed, 39 insertions(+), 1 deletion(-)
+ create mode 100644 uuu/emmc_burn_img.lst
+
+diff --git a/uuu/CMakeLists.txt b/uuu/CMakeLists.txt
+index a2d8c87..06b8a6d 100644
+--- a/uuu/CMakeLists.txt
++++ b/uuu/CMakeLists.txt
+@@ -20,6 +20,7 @@ set(LSTS
+ 	uuu.lst
+ 	emmc_burn_loader.lst
+ 	emmc_burn_all.lst
++	emmc_burn_img.lst
+ 	fat_write.lst
+ 	qspi_burn_loader.lst
+ 	sd_burn_loader.lst
+diff --git a/uuu/buildincmd.cpp b/uuu/buildincmd.cpp
+index 2cbc973..5acda05 100644
+--- a/uuu/buildincmd.cpp
++++ b/uuu/buildincmd.cpp
+@@ -41,7 +41,12 @@ BuildCmd g_buildin_cmd[] =
+ 	{
+ 		"emmc_all",
+ #include "emmc_burn_all.clst"
+-		,"burn whole image to eMMC"
++		,"burn whole image to eMMC and boot loader to eMMC boot area"
++	},
++	{
++		"emmc_img",
++#include "emmc_burn_img.clst"
++		,"burn whole image to eMMC user data area"
+ 	},
+ 	{
+ 		"fat_write",
+diff --git a/uuu/emmc_burn_img.lst b/uuu/emmc_burn_img.lst
+new file mode 100644
+index 0000000..8797d3c
+--- /dev/null
++++ b/uuu/emmc_burn_img.lst
+@@ -0,0 +1,32 @@
++uuu_version 1.2.39
++
++# This command will be run when i.MX6/7 i.MX8MM, i.MX8MQ
++SDP: boot -f _flash.bin
++
++# This command will be run when ROM support stream mode
++# i.MX8QXP, i.MX8QM
++SDPS: boot -f _flash.bin
++
++# These commands will be run when use SPL and will be skipped if no spl
++# SDPU will be deprecated. please use SDPV instead of SDPU
++# {
++SDPU: delay 1000
++SDPU: write -f _flash.bin -offset 0x57c00
++SDPU: jump
++# }
++
++# These commands will be run when use SPL and will be skipped if no spl
++# if (SPL support SDPV)
++# {
++SDPV: delay 1000
++SDPV: write -f _flash.bin -skipspl
++SDPV: jump
++# }
++
++
++FB: ucmd setenv fastboot_dev mmc
++FB: ucmd setenv mmcdev ${emmc_dev}
++FB: ucmd mmc dev ${emmc_dev}
++FB: flash -raw2sparse all _rootfs.sdcard
++FB: ucmd mmc partconf ${emmc_dev} 0 0 0
++FB: done
+-- 
+2.21.0
+
