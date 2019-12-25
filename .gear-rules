@@ -1,2 +1,2 @@
-tar: uuu_@version@:. name=@name@
+tar: @version@:. name=@name@
 copy?: *.patch
