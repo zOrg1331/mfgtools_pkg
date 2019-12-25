@@ -1,11 +1,11 @@
 --- a/uuu/uuu.cpp
 +++ b/uuu/uuu.cpp
-@@ -551,7 +551,7 @@ int progress(uuu_notify nt, void *p)
+@@ -628,7 +628,7 @@ int progress(uuu_notify nt, void *p)
  				it->second.print();
  
- 			for (size_t i = 0; i < g_map_path_nt.size() + 2; i++)
+ 			for (size_t i = 0; i < g_map_path_nt.size() + 3; i++)
 -				cout << "\x1B[1F";
 +				cout << "\x1B[1A";
+ 
  		}
  
- 		(*np)[nt.id] = g_map_path_nt[(*np)[nt.id].m_dev];

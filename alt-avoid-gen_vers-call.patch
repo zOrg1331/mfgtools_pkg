@@ -1,8 +1,8 @@
-diff --git a/libuuu/CMakeLists.txt b/libuuu/CMakeLists.txt
+diff --g3it a/libuuu/CMakeLists.txt b/libuuu/CMakeLists.txt
 index ef548fb..ddd4779 100644
 --- a/libuuu/CMakeLists.txt
 +++ b/libuuu/CMakeLists.txt
-@@ -24,23 +24,14 @@ set(SOURCES
+@@ -24,25 +24,16 @@ set(SOURCES
  	usbhotplug.cpp
  	version.cpp
  	sdp.cpp
@@ -11,7 +11,9 @@ index ef548fb..ddd4779 100644
  	fastboot.cpp
  	zip.cpp
  	fat.cpp
+ 	tar.cpp
  	rominfo.cpp
+ 	http.cpp
  )
  
 -set(generated_files_dir "${CMAKE_BINARY_DIR}/libuuu/gen")
